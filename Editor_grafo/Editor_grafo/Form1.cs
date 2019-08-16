@@ -19,6 +19,9 @@ namespace Editor_grafo
         bool seleccion;
         Vertice selVertice;
 
+        Arista arisOri;
+        Arista arisCopia;
+
         public Form_Editor()
         {
             InitializeComponent();
@@ -34,6 +37,7 @@ namespace Editor_grafo
         private void Form_Editor_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             bool band = false;
+            Arista aristaSel = null;
 
             if (e.Button == MouseButtons.Left) // si es el click izquierdo, se agregara un nuevo vertice
             {
@@ -41,13 +45,39 @@ namespace Editor_grafo
                 {
                   foreach (Vertice v in vertices)
                   {
-                     if (e.X >= v.getX() - radio && e.Y >= v.getY() - radio &&
-                         e.X <= v.getX() + radio && e.Y <= v.getY() + radio)
-                     {
-                            MessageBox.Show("Esta dentro en el vertice: " + v.getNum());
+                        //if (e.X >= v.getX() - radio && e.Y >= v.getY() - radio &&
+                        //    e.X <= v.getX() + radio && e.Y <= v.getY() + radio)
+                        // {
+                        if (v.Adentro(e.Location))
+                        {
+                            //MessageBox.Show("Esta dentro en el vertice: " + v.getNum());
                             band = true;
-                        break;
-                     }
+                            lb_config.Items.Clear();
+                            lb_config.Items.Add("Numero de Nodo: " + v.getNum());
+                            bool ban = false;
+                            foreach (Arista ar in aristas)
+                            {
+                                if (v.getNum() == ar.getNumA())
+                                {
+                                    ban = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    ban = false;
+                                }
+                            }
+                            if (ban)
+                            {
+                                lb_config.Items.Add("Grafo dirigido");
+                            }
+                            else
+                            {
+                                lb_config.Items.Add("Grafo no dirigido");
+                            }
+                            break;
+                        }
+                        //  }
                   }
 
                   if (!band)
@@ -63,8 +93,31 @@ namespace Editor_grafo
                     Refresh();
                 }
             }
-            else //si es el derecho se agregara una nueva arista
+            else if(e.Button == MouseButtons.Right) //si es el derecho se agregara una nueva arista
             {
+                foreach (Vertice v in vertices)
+                {
+                    if (v.Adentro(e.Location))
+                    {
+                        aristaSel = new Arista(v, radio);
+                        aristas.Add(aristaSel);
+
+                        if (arisOri == null)
+                        {
+                            arisOri = aristaSel;
+                        }
+                        else
+                        {
+                            if (aristaSel!= null)
+                            {
+                                arisOri.ConectarA(aristaSel);
+                                //arisOri.ConectarB(vertices);
+                            }
+                            arisOri = null;
+                            Refresh();
+                        }
+                    }
+                }
             }
         }
 
@@ -75,32 +128,50 @@ namespace Editor_grafo
             {
                 v.DibujaVertice(e.Graphics);
             }
+            foreach (Arista a in aristas)
+            {
+                a.DibujaArista(e.Graphics);
+            }
         }
 
         private void Form_Editor_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left) // si es el click izquierdo, se agregara un nuevo vertice
+            if (e.Button == MouseButtons.Left) 
             {
                 foreach (Vertice v in vertices)
                 {
-                    if (e.X >= v.getX() - radio && e.Y >= v.getY() - radio &&
-                        e.X <= v.getX() + radio && e.Y <= v.getY() + radio)
+                    if (v.Adentro(e.Location))
                     {
                         selVertice = v;
                         seleccion = true;
-                        break;
+
+                        foreach (Arista ar in aristas)
+                        {
+                            if (selVertice.getNum() == ar.getNumA())
+                            {
+                                arisCopia = ar;
+                            }
+                        }
                     }
+                    //if (e.X >= v.getX() - radio && e.Y >= v.getY() - radio &&
+                    //    e.X <= v.getX() + radio && e.Y <= v.getY() + radio)
+                    //{
+                        //selVertice = v;
+                        //seleccion = true;
+                    //}
                 }
             }
         }
 
         private void Form_Editor_MouseMove(object sender, MouseEventArgs e) //cuando se mueve el mouse
         {
-            if (selVertice == null) return;
+            //if (selVertice == null) return;
             if (seleccion)
             {
+               // arisCopia.modificarPosArista(e.Location);
                 selVertice.Posicion(e.Location);
-                Refresh();
+                arisCopia.modificarPosArista(e.Location);
+                //Refresh();
                 Invalidate();
             }
         }
@@ -108,6 +179,11 @@ namespace Editor_grafo
         private void Form_Editor_MouseUp(object sender, MouseEventArgs e) // al soltar el click, se deselecciona el nodo
         {
             seleccion = false;
+        }
+
+        public List<Vertice> getListVert()
+        {
+            return vertices;
         }
     }
 }

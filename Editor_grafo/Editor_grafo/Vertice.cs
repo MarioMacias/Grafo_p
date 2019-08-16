@@ -9,7 +9,7 @@ using System.Drawing.Drawing2D;
 
 namespace Editor_grafo
 {
-    class Vertice
+    public class Vertice
     {
         static int orden = 0;
 
@@ -19,9 +19,7 @@ namespace Editor_grafo
         GraphicsPath gp;
         Font letra;
         Rectangle rec;
-        Point centro;
-        //bool bidireccional;
-
+        public Point centro;
 
         public Vertice(int x, int y, int radio)
         {
@@ -47,17 +45,17 @@ namespace Editor_grafo
                    Alignment = StringAlignment.Center,
                    LineAlignment = StringAlignment.Center});
         }
-
-        public bool Adentro(Point pt)
-        {
-            return gp.IsVisible(pt);
-        }
-
+        
         public void Posicion(Point pt)
         {
             gp.Transform(new Matrix(1, 0, 0, 1, pt.X - centro.X, pt.Y - centro.Y));
             centro = pt;
             rec = Rectangle.Round(gp.GetBounds());
+        }
+
+        public bool Adentro(Point pt)
+        {
+            return gp.IsVisible(pt);
         }
 
         public int getX()
