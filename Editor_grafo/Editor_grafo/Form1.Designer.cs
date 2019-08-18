@@ -41,6 +41,12 @@
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
             this.lb_config = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.check_nodoDir = new System.Windows.Forms.CheckBox();
+            this.tb_pesoArista = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.rtb_datos = new System.Windows.Forms.RichTextBox();
+            this.btn_EliminarNodo = new System.Windows.Forms.Button();
+            this.btn_matrizAdy = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -109,7 +115,7 @@
             this.lb_config.ItemHeight = 16;
             this.lb_config.Location = new System.Drawing.Point(7, 67);
             this.lb_config.Name = "lb_config";
-            this.lb_config.Size = new System.Drawing.Size(140, 180);
+            this.lb_config.Size = new System.Drawing.Size(140, 68);
             this.lb_config.TabIndex = 1;
             // 
             // label1
@@ -122,11 +128,74 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Datos del Nodo";
             // 
+            // check_nodoDir
+            // 
+            this.check_nodoDir.AutoSize = true;
+            this.check_nodoDir.Location = new System.Drawing.Point(7, 152);
+            this.check_nodoDir.Name = "check_nodoDir";
+            this.check_nodoDir.Size = new System.Drawing.Size(90, 17);
+            this.check_nodoDir.TabIndex = 3;
+            this.check_nodoDir.Text = "Nodo Dirigido";
+            this.check_nodoDir.UseVisualStyleBackColor = true;
+            // 
+            // tb_pesoArista
+            // 
+            this.tb_pesoArista.Location = new System.Drawing.Point(6, 174);
+            this.tb_pesoArista.Name = "tb_pesoArista";
+            this.tb_pesoArista.Size = new System.Drawing.Size(25, 20);
+            this.tb_pesoArista.TabIndex = 5;
+            this.tb_pesoArista.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tb_pesoArista_KeyPress);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(37, 181);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(60, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Peso Arista";
+            // 
+            // rtb_datos
+            // 
+            this.rtb_datos.Location = new System.Drawing.Point(7, 260);
+            this.rtb_datos.Name = "rtb_datos";
+            this.rtb_datos.Size = new System.Drawing.Size(258, 247);
+            this.rtb_datos.TabIndex = 7;
+            this.rtb_datos.Text = "";
+            // 
+            // btn_EliminarNodo
+            // 
+            this.btn_EliminarNodo.BackColor = System.Drawing.Color.Maroon;
+            this.btn_EliminarNodo.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.btn_EliminarNodo.Location = new System.Drawing.Point(36, 202);
+            this.btn_EliminarNodo.Name = "btn_EliminarNodo";
+            this.btn_EliminarNodo.Size = new System.Drawing.Size(91, 23);
+            this.btn_EliminarNodo.TabIndex = 8;
+            this.btn_EliminarNodo.Text = "Eliminar Nodo";
+            this.btn_EliminarNodo.UseVisualStyleBackColor = false;
+            this.btn_EliminarNodo.Click += new System.EventHandler(this.btn_EliminarNodo_Click);
+            // 
+            // btn_matrizAdy
+            // 
+            this.btn_matrizAdy.Location = new System.Drawing.Point(6, 231);
+            this.btn_matrizAdy.Name = "btn_matrizAdy";
+            this.btn_matrizAdy.Size = new System.Drawing.Size(161, 23);
+            this.btn_matrizAdy.TabIndex = 9;
+            this.btn_matrizAdy.Text = "Generar matriz de adyacencia";
+            this.btn_matrizAdy.UseVisualStyleBackColor = true;
+            this.btn_matrizAdy.Click += new System.EventHandler(this.btn_matrizAdy_Click);
+            // 
             // Form_Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 551);
+            this.Controls.Add(this.btn_matrizAdy);
+            this.Controls.Add(this.btn_EliminarNodo);
+            this.Controls.Add(this.rtb_datos);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.tb_pesoArista);
+            this.Controls.Add(this.check_nodoDir);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lb_config);
             this.Controls.Add(this.menuStrip1);
@@ -161,6 +230,12 @@
         private System.Windows.Forms.FontDialog fontDialog1;
         private System.Windows.Forms.ListBox lb_config;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox check_nodoDir;
+        private System.Windows.Forms.TextBox tb_pesoArista;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.RichTextBox rtb_datos;
+        private System.Windows.Forms.Button btn_EliminarNodo;
+        private System.Windows.Forms.Button btn_matrizAdy;
     }
 }
 

@@ -14,6 +14,7 @@ namespace Editor_grafo
         static int orden = 0;
 
         int x, y, radio;
+        bool EsDirigido;
         Pen circ;
         int num;
         GraphicsPath gp;
@@ -21,11 +22,12 @@ namespace Editor_grafo
         Rectangle rec;
         public Point centro;
 
-        public Vertice(int x, int y, int radio)
+        public Vertice(int x, int y, int radio, bool EsDirigido)
         {
             this.x = x;     //posición del ratón en x
             this.y = y;     //posición del ratón en y
             this.radio = radio;
+            this.EsDirigido = EsDirigido; // true si es dirigido, false si no
             rec = new Rectangle(x - radio, y - radio, 2 * radio, 2 * radio);
             num = ++orden;
 
@@ -71,6 +73,11 @@ namespace Editor_grafo
         public int getNum()
         {
             return this.num;
+        }
+
+        public bool getDirig()
+        {
+            return EsDirigido;
         }
     }
 }

@@ -18,6 +18,7 @@ namespace Editor_grafo
         private List<Arista> aristas;
         bool seleccion;
         Vertice selVertice;
+        Arista aristaSel;
 
         Arista arisOri;
         Arista arisCopia;
@@ -32,42 +33,26 @@ namespace Editor_grafo
             DoubleBuffered = true;
             vertices = new List<Vertice>();
             aristas = new List<Arista>();
+            check_nodoDir.Checked = true;
         }
 
         private void Form_Editor_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             bool band = false;
-            Arista aristaSel = null;
+            aristaSel = null;
 
-            if (e.Button == MouseButtons.Left) // si es el click izquierdo, se agregara un nuevo vertice
+            if (e.Button == MouseButtons.Left) // si es el click izquierdo, se ve los datos del nodo
             {
                 if (vertices.Count != 0)
                 {
-                  foreach (Vertice v in vertices)
+                    foreach (Vertice v in vertices)
                   {
-                        //if (e.X >= v.getX() - radio && e.Y >= v.getY() - radio &&
-                        //    e.X <= v.getX() + radio && e.Y <= v.getY() + radio)
-                        // {
                         if (v.Adentro(e.Location))
                         {
-                            //MessageBox.Show("Esta dentro en el vertice: " + v.getNum());
                             band = true;
                             lb_config.Items.Clear();
                             lb_config.Items.Add("Numero de Nodo: " + v.getNum());
-                            bool ban = false;
-                            foreach (Arista ar in aristas)
-                            {
-                                if (v.getNum() == ar.getNumA())
-                                {
-                                    ban = true;
-                                    break;
-                                }
-                                else
-                                {
-                                    ban = false;
-                                }
-                            }
-                            if (ban)
+                            if (v.getDirig() == true)
                             {
                                 lb_config.Items.Add("Grafo dirigido");
                             }
@@ -75,21 +60,31 @@ namespace Editor_grafo
                             {
                                 lb_config.Items.Add("Grafo no dirigido");
                             }
+                           // rtb_datos.Clear();
+                            
+                            foreach ( Arista a in aristas)
+                            {
+                                if (v.getNum() == a.getNumA())
+                                {
+                                    lb_config.Items.Add("Peso de la arista:" + a.getPeso().Text);
+                                }
+                                //modificacion saber que aristas estan conectados
+                             //   rtb_datos.Text += ", " + a.getNumA();   
+                            }
                             break;
                         }
-                        //  }
                   }
 
                   if (!band)
                   {
                      band = false;
-                     vertices.Add(new Vertice(e.X, e.Y, radio));
+                     vertices.Add(new Vertice(e.X, e.Y, radio, check_nodoDir.Checked));    //Se agrega un nuevo nodo
                      Refresh();
                   }
                 }
                 else
                 {
-                    vertices.Add(new Vertice(e.X, e.Y, radio));
+                    vertices.Add(new Vertice(e.X, e.Y, radio, check_nodoDir.Checked));
                     Refresh();
                 }
             }
@@ -99,19 +94,25 @@ namespace Editor_grafo
                 {
                     if (v.Adentro(e.Location))
                     {
-                        aristaSel = new Arista(v, radio);
-                        aristas.Add(aristaSel);
+                        //Creacion del nuevo label numero de peso
+                        Label lab = new Label();
+                        lab.Name = "numPeso" + v.getNum();
+                        lab.Width = 20;
+                        lab.Height = 20;
+                        Controls.Add(lab); //Controls para agregar el Label a la forma
 
-                        if (arisOri == null)
+                        aristaSel = new Arista(v, radio, lab);
+
+                        aristas.Add(aristaSel);
+                        if (arisOri == null) //primer nodo seleccionado
                         {
                             arisOri = aristaSel;
                         }
                         else
                         {
-                            if (aristaSel!= null)
+                            if (aristaSel!= null) //segundo nodo
                             {
                                 arisOri.ConectarA(aristaSel);
-                                //arisOri.ConectarB(vertices);
                             }
                             arisOri = null;
                             Refresh();
@@ -128,9 +129,11 @@ namespace Editor_grafo
             {
                 v.DibujaVertice(e.Graphics);
             }
+            
             foreach (Arista a in aristas)
             {
-                a.DibujaArista(e.Graphics);
+                a.DibujaArista(e.Graphics, aristas);
+               // a.dibujaArista2(e.Graphics, vertices);
             }
         }
 
@@ -153,25 +156,19 @@ namespace Editor_grafo
                             }
                         }
                     }
-                    //if (e.X >= v.getX() - radio && e.Y >= v.getY() - radio &&
-                    //    e.X <= v.getX() + radio && e.Y <= v.getY() + radio)
-                    //{
-                        //selVertice = v;
-                        //seleccion = true;
-                    //}
                 }
             }
         }
 
         private void Form_Editor_MouseMove(object sender, MouseEventArgs e) //cuando se mueve el mouse
         {
-            //if (selVertice == null) return;
             if (seleccion)
             {
-               // arisCopia.modificarPosArista(e.Location);
                 selVertice.Posicion(e.Location);
-                arisCopia.modificarPosArista(e.Location);
-                //Refresh();
+                if(aristas.Count > 0)
+                {
+                    arisCopia.modificarPosArista(e.Location);
+                }
                 Invalidate();
             }
         }
@@ -181,9 +178,56 @@ namespace Editor_grafo
             seleccion = false;
         }
 
-        public List<Vertice> getListVert()
+        private void tb_pesoArista_KeyPress(object sender, KeyPressEventArgs e)
         {
-            return vertices;
+            if (e.KeyChar == 13) //si preciono enter
+            {
+                arisCopia.cambioPeso(tb_pesoArista);
+                MessageBox.Show("Se modifico el peso de la arista");
+                tb_pesoArista.Clear();
+            }
+        }
+
+        private void btn_EliminarNodo_Click(object sender, EventArgs e)
+        {
+            if (selVertice != null)
+            {
+                DialogResult result = MessageBox.Show("Seguro que quieres eliminar el nodo: " + selVertice.getNum(),
+                    "Eliminar", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                {
+                    string nom = "numPeso" + selVertice.getNum();
+                    foreach (Label labs in this.Controls.OfType<Label>())
+                    {
+                        if (labs.Name == nom)
+                        {
+                            this.Controls.Remove(labs);
+                            break;
+                        }
+                    }
+                    MessageBox.Show("vertice: " + selVertice.getNum());
+                    MessageBox.Show("arista: " + arisCopia.getNumA());
+                    vertices.Remove(selVertice);
+                    aristas.Remove(arisCopia);
+                    
+                }
+                Refresh();
+                selVertice = null;
+            }
+        }
+
+        private void btn_matrizAdy_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < aristas.Count; i++)
+            {
+                for (int j = 0; i < aristas.Count; i++)
+                {
+                    rtb_datos.Text += "0";
+                }
+                rtb_datos.Text += aristas.ElementAt(i).getNumA();
+                rtb_datos.Text += "\n";
+            }
         }
     }
 }
