@@ -23,6 +23,8 @@ namespace Editor_grafo
         Arista arisOri;
         Arista arisCopia;
 
+        int[,] matrizAD;
+
         public Form_Editor()
         {
             InitializeComponent();
@@ -60,16 +62,13 @@ namespace Editor_grafo
                             {
                                 lb_config.Items.Add("Grafo no dirigido");
                             }
-                           // rtb_datos.Clear();
                             
                             foreach ( Arista a in aristas)
                             {
                                 if (v.getNum() == a.getNumA())
                                 {
                                     lb_config.Items.Add("Peso de la arista:" + a.getPeso().Text);
-                                }
-                                //modificacion saber que aristas estan conectados
-                             //   rtb_datos.Text += ", " + a.getNumA();   
+                                }  
                             }
                             break;
                         }
@@ -219,14 +218,48 @@ namespace Editor_grafo
 
         private void btn_matrizAdy_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < aristas.Count; i++)
+            rtb_datos.Clear();
+            matrizAD = new int[vertices.Count, vertices.Count];
+            llenaMatriz();
+            int i;
+            int j;
+            /*Aqui se llena la matriz dependiendo de la posicion, se tiene
+             que quitar uno porque es el numero del nodo*/
+            for (i = 0; i < aristas.Count; i++)
             {
-                for (int j = 0; i < aristas.Count; i++)
+                int a = aristas.ElementAt(i).getNumA() - 1;
+                int b = aristas.ElementAt(++i).getNumA() - 1;
+                if (check_nodoDir.Enabled == true)
                 {
-                    rtb_datos.Text += "0";
+                    matrizAD[a, b] = 1;
                 }
-                rtb_datos.Text += aristas.ElementAt(i).getNumA();
-                rtb_datos.Text += "\n";
+                else
+                {
+                    matrizAD[a, b] = 1;
+                    matrizAD[b, a] = 1;
+                }
+            }
+            /*Aqui se muestra la matriz*/
+            for (i = 0; i < vertices.Count; i++)
+            {
+                for (j = 0; j < vertices.Count; j++)
+                {
+                   rtb_datos.Text += matrizAD[i, j] + " ";
+                }
+                rtb_datos.Text += System.Environment.NewLine;
+            }
+
+        }
+
+        private void llenaMatriz()
+        {
+            int i, j;
+            for (i = 0; i < vertices.Count; i++)
+            {
+                for (j = 0; j < vertices.Count; j++)
+                {
+                    matrizAD[i, j] = 0;
+                }
             }
         }
     }

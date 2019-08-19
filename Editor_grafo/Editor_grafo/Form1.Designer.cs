@@ -159,7 +159,7 @@
             // 
             this.rtb_datos.Location = new System.Drawing.Point(7, 260);
             this.rtb_datos.Name = "rtb_datos";
-            this.rtb_datos.Size = new System.Drawing.Size(258, 247);
+            this.rtb_datos.Size = new System.Drawing.Size(160, 88);
             this.rtb_datos.TabIndex = 7;
             this.rtb_datos.Text = "";
             // 
